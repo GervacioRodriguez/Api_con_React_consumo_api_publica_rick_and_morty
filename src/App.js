@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+//importamos la carpeta
+import React, { useEffect, useState } from "react";
+import Navbar from "./Components/Navbar";
+import Personajes from "./Components/Personajes";
+import Pagination from "./Components/Pagination";
+//el llamado sera mediante fetch 
+
 
 function App() {
+  const url = "https://rickandmortyapi.com/api/character";
+
+  const [personaje, setpersonaje] = useState([]);
+  const [info, setinfo] = useState({});
+
+
+  const fetchPersonaje = (url) => {
+    fetch(url)
+      .then(response => response.json())
+      .then((data) =>
+       {
+        setpersonaje(data.results);
+        setinfo(data.info);
+       })
+      .catch(error => console.log(error));
+  };
+
+  const onPrevious =()=>{
+    fetchPersonaje(info.prev);
+  }
+
+  const onNext =()=>{
+    fetchPersonaje(info.next);
+  }
+
+  useEffect(() => {
+    //llamamos la funcion
+    fetchPersonaje(url);
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar />
+
+      <div class ="container mt-3">
+        <Pagination  prev={info.prev} next={info.next} onPrevious={onPrevious} onNext={onNext}/>
+        <Personajes personajes={personaje}/>
+      </div>
+    </>
   );
 }
-
 export default App;
+
+
